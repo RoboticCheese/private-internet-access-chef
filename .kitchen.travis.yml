@@ -1,3 +1,7 @@
 ---
 driver:
   name: digitalocean
+suites:
+  - name: default
+    excludes:
+      - macosx-10.9

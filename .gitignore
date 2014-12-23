@@ -19,6 +19,7 @@ bin/*
 
 .kitchen/
 .kitchen.local.yml
+Vagrantfile
 
 .env.sh
 coverage

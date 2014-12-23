@@ -1,7 +1,9 @@
-language: ruby
+language: objective-c
 
 install:
   - curl -L https://www.opscode.com/chef/install.sh | sudo bash -s -- -P chefdk
+  - chef exec berks vendor /tmp/kitchen/cookbooks
+  - sudo chef-client -z -c test/client.rb -j test/dna.json
   - chef exec bundle install --without=development integration
 
 before_script:
@@ -10,7 +12,7 @@ before_script:
   - echo -e $DIGITALOCEAN_SSH_KEY_BODY > ~/.ssh/id_rsa
 
 script:
-  - chef exec rake
+  - chef exec rake && chef exec bundle exec rspec --default-path test/integration/default/serverspec -f d
 
 after_script:
 

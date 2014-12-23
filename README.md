@@ -10,65 +10,78 @@ Private Internet Access Cookbook
 [codeclimate]: https://codeclimate.com/github/RoboticCheese/private-internet-access-chef
 [coveralls]: https://coveralls.io/r/RoboticCheese/private-internet-access-chef
 
-TODO: Enter the cookbook description here.
+A Chef cookbook for installing the Private Internet Access application.
 
 Requirements
 ============
 
-TODO: Describe cookbook dependencies.
+This cookbook consumes the
+[dmg cookbook](https://supermarket.chef.io/cookbooks/dmg) to support
+installation of OS X packages.
 
 Usage
 =====
 
-TODO: Describe how to use the cookbook.
+Resources can be called directly or the main recipe that uses those resources
+can be added to your run\_list.
 
 Recipes
 =======
 
 ***default***
 
-TODO: Describe each component recipe.
+Calls the `private_internet_access` resource to do a package install.
 
 Attributes
 ==========
 
 ***default***
 
-TODO: Describe any noteworthy attributes.
+A custom package URL can be provided.
+
+    default['private_internet_access']['package_url'] = nil
 
 Resources
 =========
 
 ***private_internet_access***
 
-TODO: Describe each included resource.
+Wraps the fetching and installation of a remote package into one main resource.
 
 Syntax:
 
-    private_internet_access 'my_resource' do
-        attribute1 'value1'
-        action :create
+    private_internet_access 'pia' do
+        package_url 'https://somewhere.org/pia.dmg'
+        action :install
     end
 
 Actions:
 
-| Action  | Description  |
-|---------|--------------|
-| action1 | Do something |
+| Action     | Description                           |
+|------------|---------------------------------------|
+| `:install` | Default; installs the PIA application |
 
 Attributes:
 
-| Attribute  | Default        | Description          |
-|------------|----------------|----------------------|
-| attribute1 | `'some_value'` | Do something         |
-| action     | `:create`      | Action(s) to perform |
+| Attribute    | Default    | Description                                   |
+|--------------|------------|-----------------------------------------------|
+| package\_url | `nil`      | Optionally download package from a custom URL |
+| action       | `:install` | The action to perform                         |
 
 Providers
 =========
 
-TODO: Describe each included provider
+***Chef::Provider::PrivateInternetAccess***
 
-***Chef::Provider::SomeProvider***
+A generic provider for all non-platform-specific functionality.
+
+***Chef::Provider::PrivateInternetAccess::MacOSX***
+
+Provides the Mac OS X platform functionality.
+
+***Chef::Provider::PrivateInternetAccess::Windows***
+
+Provides the Windows platform functionality.
 
 Contributing
 ============

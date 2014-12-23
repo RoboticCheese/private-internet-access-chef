@@ -1,7 +1,7 @@
 # Encoding: UTF-8
 #
 # Cookbook Name:: private-internet-access
-# Recipe:: default
+# Attributes:: default
 #
 # Copyright 2014 Jonathan Hartman
 #
@@ -18,6 +18,4 @@
 # limitations under the License.
 #
 
-private_internet_access 'pia' do
-  package_url node['private_internet_access']['package_url']
-end
+default['private_internet_access']['package_url'] = nil
