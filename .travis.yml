@@ -4,7 +4,7 @@ install:
   - curl -L https://www.opscode.com/chef/install.sh | sudo bash -s -- -P chefdk
   - chef exec berks vendor /tmp/kitchen/cookbooks
   - sudo chef-client -z -c test/client.rb -j test/dna.json
-  - chef exec bundle install --without=development integration
+  - chef exec bundle install --without=development
 
 before_script:
   # Pending ENV support in Kitchen's Rake tasks and not just the CLI
