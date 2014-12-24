@@ -27,15 +27,40 @@ class Chef
       #
       # @author Jonathan Hartman <j@p4nt5.com>
       class MacOsX < PrivateInternetAccess
+        #
+        # Override the install action to run the script inside the OS X .dmg
+        #
+        def action_install
+          super
+          execute.run_action(:run)
+        end
+
         private
+
+        #
+        # The execute resource for the PIA install script
+        #
+        # @return [Chef::Resource::Execute]
+        #
+        def execute
+          unless @execute
+            @execute = Resource::Execute.new('run_pia_installer', run_context)
+            @execute.command(Chef::Config[:file_cache_path] <<
+                             '/Private Internet Access Installer.app' \
+                             '/Contents/MacOS/runner')
+            @execute.creates('/Applications/Private Internet Access.app')
+          end
+          @execute
+        end
 
         #
         # Ensure the package resource gets the OS X-specific attributes it needs
         #
         def tailor_package_to_platform
-          @package.app('Private Internet Access')
+          @package.app('Private Internet Access Installer')
           @package.volumes_dir('Private Internet Access')
           @package.source(URI.encode("file://#{download_dest}"))
+          @package.destination(Chef::Config[:file_cache_path])
         end
 
         #
