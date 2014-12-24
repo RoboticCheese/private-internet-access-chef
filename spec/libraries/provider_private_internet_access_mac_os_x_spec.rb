@@ -33,7 +33,8 @@ describe Chef::Provider::PrivateInternetAccess::MacOsX do
 
     it 'uses the correct command' do
       expected = Chef::Config[:file_cache_path] <<
-                 '/Private Internet Access Installer.app/Contents/MacOS/runner'
+                 '/Private\ Internet\ Access\ Installer.app/' \
+                 'Contents/MacOS/runner'
       expect(provider.send(:execute).command).to eq(expected)
     end
 
