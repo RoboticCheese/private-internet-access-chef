@@ -45,9 +45,11 @@ class Chef
         def execute
           unless @execute
             @execute = Resource::Execute.new('run_pia_installer', run_context)
-            @execute.command(Chef::Config[:file_cache_path] <<
-                             '/Private Internet Access Installer.app' \
-                             '/Contents/MacOS/runner')
+            @execute.command(
+              ::File.join(Chef::Config[:file_cache_path],
+                          'Private Internet Access Installer.app',
+                          'Contents/MacOS/runner')
+            )
             @execute.creates('/Applications/Private Internet Access.app')
           end
           @execute
