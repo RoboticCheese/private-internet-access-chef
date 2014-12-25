@@ -9,7 +9,9 @@ describe Chef::Provider::PrivateInternetAccess::Windows do
   let(:provider) { described_class.new(new_resource, nil) }
 
   describe '#tailor_package_to_platform' do
-    let(:package) { double(app: true, volumes_dir: true, source: true) }
+    let(:package) do
+      double(package_name: true, source: true)
+    end
 
     let(:provider) do
       p = super()
@@ -20,6 +22,12 @@ describe Chef::Provider::PrivateInternetAccess::Windows do
     before(:each) do
       allow_any_instance_of(described_class).to receive(:download_dest)
         .and_return('/tmp/package.dmg')
+    end
+
+    it 'sets the correct package_name' do
+      expected = 'Private Internet Access Support Files'
+      expect(package).to receive(:package_name).with(expected)
+      provider.send(:tailor_package_to_platform)
     end
 
     it 'sets the correct source' do
