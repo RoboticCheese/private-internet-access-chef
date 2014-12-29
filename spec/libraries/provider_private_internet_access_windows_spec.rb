@@ -10,7 +10,7 @@ describe Chef::Provider::PrivateInternetAccess::Windows do
 
   describe '#tailor_package_to_platform' do
     let(:package) do
-      double(package_name: true, source: true)
+      double(package_name: true, source: true, installer_type: true)
     end
 
     let(:provider) do
@@ -32,6 +32,11 @@ describe Chef::Provider::PrivateInternetAccess::Windows do
 
     it 'sets the correct source' do
       expect(package).to receive(:source).with('/tmp/package.dmg')
+      provider.send(:tailor_package_to_platform)
+    end
+
+    it 'sets the correct installer_type' do
+      expect(package).to receive(:installer_type).with(:nsis)
       provider.send(:tailor_package_to_platform)
     end
   end

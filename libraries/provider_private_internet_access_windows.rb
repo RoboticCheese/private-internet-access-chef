@@ -35,6 +35,7 @@ class Chef
         def tailor_package_to_platform
           @package.package_name('Private Internet Access Support Files')
           @package.source(URI.encode(download_dest))
+          @package.installer_type(:nsis)
         end
 
         #

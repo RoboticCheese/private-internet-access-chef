@@ -15,9 +15,12 @@ A Chef cookbook for installing the Private Internet Access application.
 Requirements
 ============
 
-This cookbook consumes the
-[dmg cookbook](https://supermarket.chef.io/cookbooks/dmg) to support
-installation of OS X packages.
+This cookbook requires an OS X or Windows node, as those are the only OSes
+PIA distributes a client app for.
+
+It consumes the [dmg](https://supermarket.chef.io/cookbooks/dmg) and
+[windows](https://supermarket.chef.io/cookbooks/windows) cookbooks to support
+OS X and Windows installs.
 
 Usage
 =====
