@@ -20,7 +20,9 @@
 
 require 'chef/provider'
 require 'net/http'
+require_relative 'resource_private_internet_access'
 require_relative 'provider_private_internet_access_mac_os_x'
+require_relative 'provider_private_internet_access_windows'
 
 class Chef
   class Provider

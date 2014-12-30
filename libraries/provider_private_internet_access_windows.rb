@@ -19,6 +19,9 @@
 #
 
 require 'net/http'
+require 'chef/resource/cookbook_file'
+require 'chef/resource/execute'
+require_relative 'provider_private_internet_access'
 
 class Chef
   class Provider
@@ -27,7 +30,45 @@ class Chef
       #
       # @author Jonathan Hartman <j@p4nt5.com>
       class Windows < PrivateInternetAccess
+        #
+        # Override the install action to trust the OpenVPN TAP driver cert
+        #
+        def action_install
+          cert_file.run_action(:create)
+          trust_cert.run_action(:run)
+          super
+        end
+
         private
+
+        #
+        # The execute resource to trust the TAP driver's cert
+        #
+        # @return [Chef::Resource::Execute]
+        #
+        def trust_cert
+          unless @trust_cert
+            @trust_cert = Resource::Execute.new('trust_tap_cert', run_context)
+            @trust_cert.command('certutil -addstore "TrustedPublisher" ' <<
+                                cert_file.path)
+          end
+          @trust_cert
+        end
+
+        #
+        # The cookbook_file resource for the TAP driver's trust cert
+        #
+        # @return [Chef::Resource::CookbookFile]
+        #
+        def cert_file
+          unless @cert_file
+            path = ::File.join(Chef::Config[:file_cache_path],
+                               'tap_driver_cert.cer')
+            @cert_file = Resource::CookbookFile.new(path, run_context)
+            @cert_file.cookbook(cookbook_name.to_s)
+          end
+          @cert_file
+        end
 
         #
         # Ensure the package resource gets Windows-specific attributes
@@ -35,7 +76,7 @@ class Chef
         def tailor_package_to_platform
           @package.package_name('Private Internet Access Support Files')
           @package.source(URI.encode(download_dest))
-          @package.installer_type(:nsis)
+          @package.installer_type(:installshield)
         end
 
         #

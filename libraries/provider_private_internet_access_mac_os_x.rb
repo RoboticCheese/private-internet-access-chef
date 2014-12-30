@@ -19,6 +19,8 @@
 #
 
 require 'net/http'
+require 'chef/resource/execute'
+require_relative 'provider_private_internet_access'
 
 class Chef
   class Provider
