@@ -36,10 +36,29 @@ class Chef
         def action_install
           cert_file.run_action(:create)
           trust_cert.run_action(:run)
+          run_installer.run_action(:run)
           super
         end
 
         private
+
+        #
+        # Use a Ruby block to spawn a new process for the installer, otherwise
+        # Chef hangs indefinitely when the installer starts up PIA processes
+        # and never exits
+        #
+        # @return [Chef::Resource::RubyBlock]
+        #
+        def run_installer
+          unless @run_installer
+            @run_installer = Resource::Ruby.new('run_pia_installer',
+                                                run_context)
+            # Process.spawn needs backslashes for Windows
+            @run_installer.code("spawn('#{package.source.gsub('/', '\\')}')")
+            @run_installer.creates('/Program Files/pia_manager/pia_manager.exe')
+          end
+          @run_installer
+        end
 
         #
         # The execute resource to trust the TAP driver's cert
@@ -76,7 +95,6 @@ class Chef
         def tailor_package_to_platform
           @package.package_name('Private Internet Access Support Files')
           @package.source(URI.encode(download_dest))
-          @package.installer_type(:installshield)
         end
 
         #

@@ -14,12 +14,16 @@ describe Chef::Provider::PrivateInternetAccess::Windows do
   let(:provider) { described_class.new(new_resource, nil) }
 
   describe '#action_install' do
-    [:remote_file, :package, :cert_file, :trust_cert].each do |r|
+    [
+      :remote_file, :package, :cert_file, :trust_cert, :run_installer
+    ].each do |r|
       let(r) { double(run_action: true) }
     end
 
     before(:each) do
-      [:remote_file, :package, :cert_file, :trust_cert].each do |r|
+      [
+        :remote_file, :package, :cert_file, :trust_cert, :run_installer
+      ].each do |r|
         allow_any_instance_of(described_class).to receive(r).and_return(send(r))
       end
     end
@@ -32,6 +36,35 @@ describe Chef::Provider::PrivateInternetAccess::Windows do
     it 'adds the trust cert execution to the parent install action' do
       expect(trust_cert).to receive(:run_action).with(:run)
       provider.action_install
+    end
+
+    it 'runs the installer' do
+      expect(run_installer).to receive(:run_action).with(:run)
+      provider.action_install
+    end
+  end
+
+  describe '#run_installer' do
+    let(:package) { double(source: '/somewhere/out/there/win.exe') }
+
+    before(:each) do
+      allow_any_instance_of(described_class).to receive(:package)
+        .and_return(package)
+    end
+
+    it 'returns a ruby resource' do
+      expected = Chef::Resource::Ruby
+      expect(provider.send(:run_installer)).to be_an_instance_of(expected)
+    end
+
+    it 'uses the correct code' do
+      expected = 'spawn(\'\\somewhere\\out\\there\\win.exe\')'
+      expect(provider.send(:run_installer).code).to eq(expected)
+    end
+
+    it 'uses the correct file creation check' do
+      expected = '/Program Files/pia_manager/pia_manager.exe'
+      expect(provider.send(:run_installer).creates).to eq(expected)
     end
   end
 
@@ -84,11 +117,6 @@ describe Chef::Provider::PrivateInternetAccess::Windows do
 
     it 'sets the correct source' do
       expect(package).to receive(:source).with('/tmp/package.dmg')
-      provider.send(:tailor_package_to_platform)
-    end
-
-    it 'sets the correct installer_type' do
-      expect(package).to receive(:installer_type).with(:installshield)
       provider.send(:tailor_package_to_platform)
     end
   end
