@@ -34,10 +34,11 @@ class Chef
         # Override the install action to trust the OpenVPN TAP driver cert
         #
         def action_install
+          remote_file.run_action(:create)
           cert_file.run_action(:create)
           trust_cert.run_action(:run)
           run_installer.run_action(:run)
-          super
+          new_resource.installed = true
         end
 
         private
@@ -51,11 +52,12 @@ class Chef
         #
         def run_installer
           unless @run_installer
-            @run_installer = Resource::Ruby.new('run_pia_installer',
-                                                run_context)
+            @run_installer = Resource::Ruby.new('pia_install', run_context)
+            chk = '/Program Files/pia_manager/pia_manager.exe'
             # Process.spawn needs backslashes for Windows
-            @run_installer.code("spawn('#{package.source.gsub('/', '\\')}')")
-            @run_installer.creates('/Program Files/pia_manager/pia_manager.exe')
+            @run_installer.code("spawn('#{package.source.gsub('/', '\\')}') " \
+                                "&& (sleep 1 while !::File.exist?('#{chk}'))")
+            @run_installer.creates(chk)
           end
           @run_installer
         end

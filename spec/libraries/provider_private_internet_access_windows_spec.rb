@@ -28,18 +28,25 @@ describe Chef::Provider::PrivateInternetAccess::Windows do
       end
     end
 
-    it 'adds the cert file to the parent install action' do
-      expect(cert_file).to receive(:run_action).with(:create)
+    {
+      remote_file: :create,
+      cert_file: :create,
+      trust_cert: :run,
+      run_installer: :run
+    }.each do |k, v|
+      it "sends a #{v} action to #{k}" do
+        expect(send(k)).to receive(:run_action).with(v)
+        provider.action_install
+      end
+    end
+
+    it 'sets the installed status' do
+      expect(new_resource).to receive(:installed=).with(true)
       provider.action_install
     end
 
-    it 'adds the trust cert execution to the parent install action' do
-      expect(trust_cert).to receive(:run_action).with(:run)
-      provider.action_install
-    end
-
-    it 'runs the installer' do
-      expect(run_installer).to receive(:run_action).with(:run)
+    it 'takes no action on the package resource' do
+      expect(new_resource).not_to receive(:run_action)
       provider.action_install
     end
   end
@@ -58,7 +65,9 @@ describe Chef::Provider::PrivateInternetAccess::Windows do
     end
 
     it 'uses the correct code' do
-      expected = 'spawn(\'\\somewhere\\out\\there\\win.exe\')'
+      expected = 'spawn(\'\\somewhere\\out\\there\\win.exe\') && ' \
+                 '(sleep 1 while !::File.exist?(\'/Program Files/pia_manager' \
+                 '/pia_manager.exe\'))'
       expect(provider.send(:run_installer).code).to eq(expected)
     end
 
