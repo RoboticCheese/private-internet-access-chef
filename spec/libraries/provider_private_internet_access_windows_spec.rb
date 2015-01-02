@@ -15,14 +15,24 @@ describe Chef::Provider::PrivateInternetAccess::Windows do
 
   describe '#action_install' do
     [
-      :remote_file, :package, :cert_file, :trust_cert, :run_installer
+      :remote_file,
+      :package,
+      :cert_file,
+      :trust_cert,
+      :start_installer,
+      :wait_for_installer
     ].each do |r|
       let(r) { double(run_action: true) }
     end
 
     before(:each) do
       [
-        :remote_file, :package, :cert_file, :trust_cert, :run_installer
+        :remote_file,
+        :package,
+        :cert_file,
+        :trust_cert,
+        :start_installer,
+        :wait_for_installer
       ].each do |r|
         allow_any_instance_of(described_class).to receive(r).and_return(send(r))
       end
@@ -32,7 +42,8 @@ describe Chef::Provider::PrivateInternetAccess::Windows do
       remote_file: :create,
       cert_file: :create,
       trust_cert: :run,
-      run_installer: :run
+      start_installer: :run,
+      wait_for_installer: :run
     }.each do |k, v|
       it "sends a #{v} action to #{k}" do
         expect(send(k)).to receive(:run_action).with(v)
@@ -46,12 +57,30 @@ describe Chef::Provider::PrivateInternetAccess::Windows do
     end
 
     it 'takes no action on the package resource' do
-      expect(new_resource).not_to receive(:run_action)
+      expect(package).not_to receive(:run_action)
       provider.action_install
     end
   end
 
-  describe '#run_installer' do
+  describe '#wait_for_installer' do
+    it 'returns a ruby resource' do
+      expected = Chef::Resource::Ruby
+      expect(provider.send(:wait_for_installer)).to be_an_instance_of(expected)
+    end
+
+    it 'sets the correct code' do
+      expected = 'sleep 1 while !::File.exist?(\'/Program Files/pia_manager/' \
+                 'pia_manager.exe\')'
+      expect(provider.send(:wait_for_installer).code).to eq(expected)
+    end
+
+    it 'sets the correct watch file' do
+      expected = '/Program Files/pia_manager/pia_manager.exe'
+      expect(provider.send(:wait_for_installer).creates).to eq(expected)
+    end
+  end
+
+  describe '#start_installer' do
     let(:package) { double(source: '/somewhere/out/there/win.exe') }
 
     before(:each) do
@@ -59,21 +88,19 @@ describe Chef::Provider::PrivateInternetAccess::Windows do
         .and_return(package)
     end
 
-    it 'returns a ruby resource' do
-      expected = Chef::Resource::Ruby
-      expect(provider.send(:run_installer)).to be_an_instance_of(expected)
+    it 'returns a powershell_script resource' do
+      expected = Chef::Resource::PowershellScript
+      expect(provider.send(:start_installer)).to be_an_instance_of(expected)
     end
 
     it 'uses the correct code' do
-      expected = 'spawn(\'\\somewhere\\out\\there\\win.exe\') && ' \
-                 '(sleep 1 while !::File.exist?(\'/Program Files/pia_manager' \
-                 '/pia_manager.exe\'))'
-      expect(provider.send(:run_installer).code).to eq(expected)
+      expected = 'Start-Process \\somewhere\\out\\there\\win.exe'
+      expect(provider.send(:start_installer).code).to eq(expected)
     end
 
-    it 'uses the correct file creation check' do
+    it 'uses the correct watch file' do
       expected = '/Program Files/pia_manager/pia_manager.exe'
-      expect(provider.send(:run_installer).creates).to eq(expected)
+      expect(provider.send(:start_installer).creates).to eq(expected)
     end
   end
 

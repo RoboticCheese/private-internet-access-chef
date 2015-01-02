@@ -21,6 +21,8 @@
 require 'net/http'
 require 'chef/resource/cookbook_file'
 require 'chef/resource/execute'
+require 'chef/resource/powershell_script'
+require 'chef/resource/ruby'
 require_relative 'provider_private_internet_access'
 
 class Chef
@@ -30,36 +32,62 @@ class Chef
       #
       # @author Jonathan Hartman <j@p4nt5.com>
       class Windows < PrivateInternetAccess
+        WATCH_FILE ||= '/Program Files/pia_manager/pia_manager.exe'
+
         #
-        # Override the install action to trust the OpenVPN TAP driver cert
+        # Override the install action to...
+        # 1) trust the OpenVPN TAP driver cert
+        # 2) Install PIA from a Powershell script instead of package resource
         #
         def action_install
           remote_file.run_action(:create)
           cert_file.run_action(:create)
           trust_cert.run_action(:run)
-          run_installer.run_action(:run)
+          start_installer.run_action(:run)
+          wait_for_installer.run_action(:run)
           new_resource.installed = true
         end
 
         private
 
         #
-        # Use a Ruby block to spawn a new process for the installer, otherwise
-        # Chef hangs indefinitely when the installer starts up PIA processes
-        # and never exits
+        # Because the installer process is started in the background, make
+        # Chef wait until it's finished before proceeding. Just sleep as needed
+        # and let Chef handle any timeouts.
         #
-        # @return [Chef::Resource::RubyBlock]
+        # @return [Chef::Resource::Ruby]
         #
-        def run_installer
-          unless @run_installer
-            @run_installer = Resource::Ruby.new('pia_install', run_context)
-            chk = '/Program Files/pia_manager/pia_manager.exe'
-            # Process.spawn needs backslashes for Windows
-            @run_installer.code("spawn('#{package.source.gsub('/', '\\')}') " \
-                                "&& (sleep 1 while !::File.exist?('#{chk}'))")
-            @run_installer.creates(chk)
+        def wait_for_installer
+          unless @wait_for_installer
+            @wait_for_installer = Resource::Ruby.new('pia_installer_wait',
+                                                     run_context)
+            @wait_for_installer.code(
+              "sleep 1 while !::File.exist?('#{WATCH_FILE}')"
+            )
+            @wait_for_installer.creates(WATCH_FILE)
           end
-          @run_installer
+          @wait_for_installer
+        end
+
+        #
+        # The PIA installer does something funky where it spawns the daemons
+        # in its foreground and never exits. This causes Chef to hang until
+        # it times out when using a package resource, so use Powershell to
+        # start the installer in the background.
+        #
+        # @return [Chef::Resource::PowershellScript]
+        #
+        def start_installer
+          unless @start_installer
+            @start_installer = Resource::PowershellScript.new('pia_installer',
+                                                              run_context)
+            @start_installer.code(
+              # Start-Process fails if given forward slashes
+              "Start-Process #{package.source.gsub('/', '\\')}"
+            )
+            @start_installer.creates(WATCH_FILE)
+          end
+          @start_installer
         end
 
         #
