@@ -12,6 +12,7 @@ require 'fileutils'
 require_relative 'support/matchers/private_internet_access'
 require_relative 'support/resource/dmg_package'
 require_relative 'support/provider/dmg_package'
+require_relative 'support/provider/windows_cookbook_package'
 
 RSpec.configure do |c|
   c.color = true

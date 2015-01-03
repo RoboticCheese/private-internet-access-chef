@@ -55,28 +55,48 @@ describe Chef::Provider::PrivateInternetAccess::Windows do
       expect(new_resource).to receive(:installed=).with(true)
       provider.action_install
     end
-
-    it 'takes no action on the package resource' do
-      expect(package).not_to receive(:run_action)
-      provider.action_install
-    end
   end
 
   describe '#wait_for_installer' do
-    it 'returns a ruby resource' do
-      expected = Chef::Resource::Ruby
+    let(:current_installed_version) { '1.2.3' }
+    let(:wcpackage) do
+      double(current_installed_version: current_installed_version)
+    end
+    let(:package) { double }
+
+    before(:each) do
+      allow(Chef::Provider::WindowsCookbookPackage).to receive(:new)
+        .and_return(wcpackage)
+      allow_any_instance_of(Chef::Resource::RubyBlock).to receive(:block)
+        .and_yield
+      allow_any_instance_of(described_class).to receive(:package)
+        .and_return(package)
+    end
+
+    it 'returns a ruby_block resource' do
+      expected = Chef::Resource::RubyBlock
       expect(provider.send(:wait_for_installer)).to be_an_instance_of(expected)
     end
 
-    it 'sets the correct code' do
-      expected = 'sleep 1 while !::File.exist?(\'/Program Files/pia_manager/' \
-                 'pia_manager.exe\')'
-      expect(provider.send(:wait_for_installer).code).to eq(expected)
+    context 'uninstalled package' do
+      let(:current_installed_version) { nil }
+
+      it 'sleeps' do
+        expect(wcpackage).to receive(:current_installed_version).twice
+          .and_return(current_installed_version, '1.2.3')
+        expect_any_instance_of(described_class).to receive(:sleep).with(1)
+          .once.and_return(nil)
+        provider.send(:wait_for_installer)
+      end
     end
 
-    it 'sets the correct watch file' do
-      expected = '/Program Files/pia_manager/pia_manager.exe'
-      expect(provider.send(:wait_for_installer).creates).to eq(expected)
+    context 'installed package' do
+      let(:current_installed_version) { '1.2.3' }
+
+      it 'does not sleep' do
+        expect_any_instance_of(described_class).not_to receive(:sleep)
+        provider.send(:wait_for_installer)
+      end
     end
   end
 

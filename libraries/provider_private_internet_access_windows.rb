@@ -22,7 +22,7 @@ require 'net/http'
 require 'chef/resource/cookbook_file'
 require 'chef/resource/execute'
 require 'chef/resource/powershell_script'
-require 'chef/resource/ruby'
+require 'chef/resource/ruby_block'
 require_relative 'provider_private_internet_access'
 
 class Chef
@@ -45,7 +45,7 @@ class Chef
           trust_cert.run_action(:run)
           start_installer.run_action(:run)
           wait_for_installer.run_action(:run)
-          new_resource.installed = true
+          super
         end
 
         private
@@ -59,12 +59,13 @@ class Chef
         #
         def wait_for_installer
           unless @wait_for_installer
-            @wait_for_installer = Resource::Ruby.new('pia_installer_wait',
-                                                     run_context)
-            @wait_for_installer.code(
-              "sleep 1 while !::File.exist?('#{WATCH_FILE}')"
-            )
-            @wait_for_installer.creates(WATCH_FILE)
+            @wait_for_installer = Resource::RubyBlock.new('pia_installer_wait',
+                                                          run_context)
+            @wait_for_installer.block do
+              p = Chef::Provider::WindowsCookbookPackage.new(package,
+                                                             run_context)
+              sleep 1 until p.current_installed_version
+            end
           end
           @wait_for_installer
         end
