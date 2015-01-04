@@ -1,6 +1,9 @@
 Private Internet Access Cookbook CHANGELOG
 ==========================================
 
+v?.?.? (????-??-??)
+-------------------
+
 v0.1.0 (2015-01-03)
 -------------------
 - Initial release (installation only)
