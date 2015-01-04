@@ -1,6 +1,6 @@
 # Encoding: UTF-8
 #
-# Cookbook Name:: dropbox
+# Cookbook Name:: private-internet-access
 # Library:: resource_private_internet_access
 #
 # Copyright 2014-2015 Jonathan Hartman
