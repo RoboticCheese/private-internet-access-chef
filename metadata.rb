@@ -7,7 +7,7 @@ maintainer_email 'j@p4nt5.com'
 license          'apache2'
 description      'Installs/Configures private-internet-access'
 long_description 'Installs/Configures private-internet-access'
-version          '0.0.1'
+version          '0.1.0'
 
 depends          'dmg', '~> 2.2'
 depends          'windows', '~> 1.36'

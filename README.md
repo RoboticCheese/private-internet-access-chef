@@ -10,7 +10,7 @@ Private Internet Access Cookbook
 [codeclimate]: https://codeclimate.com/github/RoboticCheese/private-internet-access-chef
 [coveralls]: https://coveralls.io/r/RoboticCheese/private-internet-access-chef
 
-A Chef cookbook for installing the Private Internet Access application.
+A Chef cookbook for installing the Private Internet Access VPN application.
 
 Requirements
 ============
