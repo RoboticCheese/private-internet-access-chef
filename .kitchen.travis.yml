@@ -1,7 +1,8 @@
 ---
 driver:
   name: digitalocean
-suites:
-  - name: default
-    excludes:
-      - macosx-10.9
+
+platforms:
+  - name: macosx
+    driver:
+      name: localhost
