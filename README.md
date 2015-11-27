@@ -1,12 +1,14 @@
 Private Internet Access Cookbook
 ================================
 [![Cookbook Version](https://img.shields.io/cookbook/v/private-internet-access.svg)][cookbook]
-[![Build Status](https://img.shields.io/travis/RoboticCheese/private-internet-access-chef.svg)][travis]
+[![OS X Build Status](https://img.shields.io/travis/RoboticCheese/private-internet-access-chef.svg)][travis]
+[![Windows Build Status](https://img.shields.io/appveyor/ci/RoboticCheese/private-internet-access-chef.svg)][appveyor]
 [![Code Climate](https://img.shields.io/codeclimate/github/RoboticCheese/private-internet-access-chef.svg)][codeclimate]
 [![Coverage Status](https://img.shields.io/coveralls/RoboticCheese/private-internet-access-chef.svg)][coveralls]
 
 [cookbook]: https://supermarket.chef.io/cookbooks/private-internet-access
 [travis]: https://travis-ci.org/RoboticCheese/private-internet-access-chef
+[appveyor]: https://ci.appveyor.com/project/RoboticCheese/private-internet-access-chef
 [codeclimate]: https://codeclimate.com/github/RoboticCheese/private-internet-access-chef
 [coveralls]: https://coveralls.io/r/RoboticCheese/private-internet-access-chef
 
