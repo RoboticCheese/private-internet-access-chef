@@ -1,7 +1,7 @@
 # Encoding: UTF-8
 #
 # Cookbook Name:: private-internet-access
-# Attributes:: default
+# Library:: resource_private_internet_access_app
 #
 # Copyright 2014-2015 Jonathan Hartman
 #
@@ -18,4 +18,17 @@
 # limitations under the License.
 #
 
-default['private_internet_access']['app']['source'] = nil
+require 'chef/resource'
+
+class Chef
+  class Resource
+    # A parent Chef resource for PIA app management.
+    #
+    # @author Jonathan Hartman <j@p4nt5.com>
+    class PrivateInternetAccessApp < Resource
+      property :source, [String, nil], default: nil
+
+      default_action :install
+    end
+  end
+end

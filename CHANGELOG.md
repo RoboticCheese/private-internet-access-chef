@@ -3,6 +3,9 @@ Private Internet Access Cookbook CHANGELOG
 
 v?.?.? (????-??-??)
 -------------------
+- Convert HWRPs to custom resources (breaking compatibility with Chef < 12.5)
+- Rename the `private_internet_access` resource to `private_internet_access_app`
+- Rename the `package_url` property/attribute to `source`
 
 v0.1.0 (2015-01-03)
 -------------------

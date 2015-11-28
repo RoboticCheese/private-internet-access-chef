@@ -18,6 +18,6 @@
 # limitations under the License.
 #
 
-private_internet_access 'pia' do
-  package_url node['private_internet_access']['package_url']
+private_internet_access 'default' do
+  source node['private_internet_access']['app']['source']
 end

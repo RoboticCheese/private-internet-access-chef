@@ -3,28 +3,32 @@
 require 'spec_helper'
 
 describe 'private-internet-access::default' do
-  let(:platform) { { platform: 'mac_os_x', version: '10.9.2' } }
-  let(:overrides) { {} }
+  let(:source) { nil }
   let(:runner) do
-    ChefSpec::ServerRunner.new(platform) do |node|
-      overrides.each { |k, v| node.set['private_internet_access'][k] = v }
+    ChefSpec::ServerRunner.new do |node|
+      unless source.nil?
+        node.set['private_internet_access']['app']['source'] = source
+      end
     end
   end
   let(:chef_run) { runner.converge(described_recipe) }
 
-  context 'default attributes' do
+  shared_examples_for 'any attribute set' do
     it 'installs PIA' do
-      expect(chef_run).to install_private_internet_access('pia')
-        .with(package_url: nil)
+      expect(chef_run).to create_private_internet_access('default')
+        .with(source: source)
     end
   end
 
-  context 'an overridden `package_url` attribute' do
-    let(:overrides) { { package_url: 'http://example.com/pkg.dmg' } }
+  context 'default attributes' do
+    let(:source) { nil }
 
-    it 'installs the desired package URL' do
-      expect(chef_run).to install_private_internet_access('pia')
-        .with(package_url: overrides[:package_url])
-    end
+    it_behaves_like 'any attribute set'
+  end
+
+  context 'an overridden `source` attribute' do
+    let(:source) { 'http://example.com/pkg.pkg' }
+
+    it_behaves_like 'any attribute set'
   end
 end

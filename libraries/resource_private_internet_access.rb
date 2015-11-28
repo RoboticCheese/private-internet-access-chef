@@ -19,51 +19,30 @@
 #
 
 require 'chef/resource'
-require_relative 'provider_private_internet_access'
+require_relative 'resource_private_internet_access_app'
 
 class Chef
   class Resource
-    # A Chef resource for PIA packages
+    # A parent custom resource to wrap the individual PIA components.
     #
     # @author Jonathan Hartman <j@p4nt5.com>
     class PrivateInternetAccess < Resource
-      attr_accessor :installed
-      alias_method :installed?, :installed
+      property :source, [String, nil], default: nil
 
-      def initialize(name, run_context = nil)
-        super
-        @resource_name = :private_internet_access
-        @provider = default_provider
-        @action = :install
-        @allowed_actions = [:install]
+      default_action :create
 
-        @installed = false
+      #
+      # Install the PIA app.
+      #
+      action :create do
+        private_internet_access_app(name) { source new_resource.source }
       end
 
       #
-      # Optionally override the calculated package URL
+      # Uninstall the PIA app.
       #
-      # @param [String] arg
-      # @return [String
-      #
-      def package_url(arg = nil)
-        set_or_return(:package_url,
-                      arg,
-                      kind_of: [String, NilClass],
-                      default: nil)
-      end
-
-      private
-
-      #
-      # Determine what the default provider for this platform should be
-      #
-      # @return [Class]
-      #
-      def default_provider
-        return nil unless node && node['platform_family']
-        Chef::Provider::PrivateInternetAccess
-          .const_get(node['platform_family'].split('_').map(&:capitalize).join)
+      action :remove do
+        private_internet_access_app(name) { action(:remove) }
       end
     end
   end

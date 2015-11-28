@@ -23,6 +23,7 @@ group :test do
   gem 'test-kitchen'
   gem 'kitchen-localhost'
   gem 'kitchen-vagrant'
+  gem 'winrm-transport'
 end
 
 group :integration do
@@ -34,6 +35,6 @@ group :deploy do
 end
 
 group :production do
-  gem 'chef', '>= 11'
+  gem 'chef', '>= 12.5'
   gem 'berkshelf'
 end
