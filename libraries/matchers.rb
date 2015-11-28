@@ -19,9 +19,16 @@
 #
 
 if defined?(ChefSpec)
-  def install_private_internet_access(name)
-    ChefSpec::Matchers::ResourceMatcher.new(:private_internet_access,
-                                            :install,
-                                            name)
+  {
+    private_internet_access: %i(create remove),
+    private_internet_access_app: %i(install remove)
+  }.each do |matcher, actions|
+    ChefSpec.define_matcher(matcher)
+
+    actions.each do |action|
+      define_method("#{action}_#{matcher}") do |name|
+        ChefSpec::Matchers::ResourceMatcher.new(matcher, action, name)
+      end
+    end
   end
 end
