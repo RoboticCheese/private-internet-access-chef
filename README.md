@@ -24,6 +24,8 @@ It consumes the [dmg](https://supermarket.chef.io/cookbooks/dmg) and
 [windows](https://supermarket.chef.io/cookbooks/windows) cookbooks to support
 OS X and Windows installs.
 
+As of v1.0.0, it uses custom resources that require Chef 12.5 or greater.
+
 Usage
 =====
 
@@ -35,58 +37,69 @@ Recipes
 
 ***default***
 
-Calls the `private_internet_access` resource to do a package install.
+Calls the `private_internet_access` resource to do an attribute-driven install.
 
 Attributes
 ==========
 
 ***default***
 
-A custom package URL can be provided.
+A custom package URL/path can be provided.
 
-    default['private_internet_access']['package_url'] = nil
+    default['private_internet_access']['app']['source'] = nil
 
 Resources
 =========
 
 ***private_internet_access***
 
-Wraps the fetching and installation of a remote package into one main resource.
+Wraps the other PIA resources under one parent resource.
 
 Syntax:
 
-    private_internet_access 'pia' do
-        package_url 'https://somewhere.org/pia.dmg'
+    private_internet_access 'default' do
+        source 'https://somewhere.org/pia.dmg'
+        action :create
+    end
+
+Actions:
+
+| Action    | Description           |
+|-----------|-----------------------|
+| `:create` | Default; installs PIA |
+| `:remove` | Uninstalls PIA        |
+
+Attributes:
+
+| Attribute | Default   | Description                                   |
+|-----------|-----------|-----------------------------------------------|
+| source    | `nil`     | Optionally download the app from a custom URL |
+| action    | `:create` | The action to perform                         |
+
+***private_internet_access_app***
+
+Controls installation of the PIA client app.
+
+Syntax:
+
+    private_internet_access_app 'default' do
+        source 'https://somewhere.org/pia.dmg'
         action :install
     end
 
 Actions:
 
-| Action     | Description                           |
-|------------|---------------------------------------|
-| `:install` | Default; installs the PIA application |
+| Action     | Description                          |
+|------------|--------------------------------------|
+| `:install` | Default; installs the PIA client app |
+| `:remove`  | Uninstalls the PIA client app        |
 
 Attributes:
 
-| Attribute    | Default    | Description                                   |
-|--------------|------------|-----------------------------------------------|
-| package\_url | `nil`      | Optionally download package from a custom URL |
-| action       | `:install` | The action to perform                         |
-
-Providers
-=========
-
-***Chef::Provider::PrivateInternetAccess***
-
-A generic provider for all non-platform-specific functionality.
-
-***Chef::Provider::PrivateInternetAccess::MacOSX***
-
-Provides the Mac OS X platform functionality.
-
-***Chef::Provider::PrivateInternetAccess::Windows***
-
-Provides the Windows platform functionality.
+| Attribute | Default    | Description                                   |
+|-----------|------------|-----------------------------------------------|
+| source    | `nil`      | Optionally download the app from a custom URL |
+| action    | `:install` | The action to perform                         |
 
 Contributing
 ============
