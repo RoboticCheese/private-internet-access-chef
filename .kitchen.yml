@@ -19,6 +19,6 @@ suites:
   - name: default
     run_list:
       - recipe[private-internet-access]
-  - name: uninstall
+  - name: remove
     run_list:
-      - recipe[private-internet-access_test::uninstall]
+      - recipe[private-internet-access_test::remove]
