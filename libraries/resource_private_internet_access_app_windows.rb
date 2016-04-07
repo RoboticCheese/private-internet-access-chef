@@ -28,8 +28,8 @@ class Chef
     # @author Jonathan Hartman <j@p4nt5.com>
     class PrivateInternetAccessAppWindows < PrivateInternetAccessApp
       URL ||= 'https://www.privateinternetaccess.com/installer/' \
-              'installer_win.exe'
-      PATH ||= ::File.expand_path('/Program Files/pia_manager')
+              'installer_win.exe'.freeze
+      PATH ||= ::File.expand_path('/Program Files/pia_manager').freeze
 
       provides :private_internet_access_app, platform_family: 'windows'
 

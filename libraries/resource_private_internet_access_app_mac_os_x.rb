@@ -28,8 +28,8 @@ class Chef
     # @author Jonathan Hartman <j@p4nt5.com>
     class PrivateInternetAccessAppMacOsX < PrivateInternetAccessApp
       URL ||= 'https://www.privateinternetaccess.com/installer/' \
-              'installer_osx.dmg'
-      PATH ||= '/Applications/Private Internet Access.app'
+              'installer_osx.dmg'.freeze
+      PATH ||= '/Applications/Private Internet Access.app'.freeze
 
       provides :private_internet_access_app, platform_family: 'mac_os_x'
 
