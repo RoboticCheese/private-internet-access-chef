@@ -12,8 +12,7 @@ source_url 'https://github.com/roboticcheese/private-internet-access-chef'
 issues_url 'https://github.com/roboticcheese/private-internet-access-chef/' \
            'issues'
 
-depends 'dmg', '~> 2.2'
-depends 'windows', '~> 1.36'
+depends 'dmg', '~> 3.1'
 
 supports 'mac_os_x'
 supports 'windows'

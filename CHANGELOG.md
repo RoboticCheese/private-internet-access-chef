@@ -1,8 +1,9 @@
 Private Internet Access Cookbook CHANGELOG
 ==========================================
 
-v?.?.? (????-??-??)
--------------------
+Unreleased
+----------
+- Remove the windows cookbook dep and update the dmg dep
 
 v1.0.0 (2015-11-28)
 -------------------

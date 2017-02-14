@@ -56,7 +56,7 @@ class Chef
         ruby_block 'Wait for PIA installer' do
           block do
             r = windows_package('Private Internet Access Support Files')
-            p = Chef::Provider::WindowsCookbookPackage.new(r, run_context)
+            p = Chef::Provider::Package::Windows.new(r, run_context)
             sleep 1 until p.current_installed_version
           end
         end
