@@ -24,7 +24,7 @@ It consumes the [dmg](https://supermarket.chef.io/cookbooks/dmg) and
 [windows](https://supermarket.chef.io/cookbooks/windows) cookbooks to support
 OS X and Windows installs.
 
-As of v1.0.0, it uses custom resources that require Chef 12.5 or greater.
+As of v1.1.0, it uses custom resources that require Chef 12.6 or greater.
 
 Usage
 =====

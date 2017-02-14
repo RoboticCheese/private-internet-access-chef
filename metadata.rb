@@ -8,6 +8,7 @@ license 'apache2'
 description 'Installs/configures the Private Internet Access VPN app'
 long_description 'Installs/configures the Private Internet Access VPN app'
 version '1.0.1'
+chef_version '>= 12.6'
 
 source_url 'https://github.com/roboticcheese/private-internet-access-chef'
 issues_url 'https://github.com/roboticcheese/private-internet-access-chef/' \
