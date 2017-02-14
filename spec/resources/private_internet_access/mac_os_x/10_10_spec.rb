@@ -10,7 +10,7 @@ describe 'resource_private_internet_access::mac_os_x::10_10' do
       version: '10.10'
     ) do |node|
       unless source.nil?
-        node.set['private_internet_access']['app']['source'] = source
+        node.normal['private_internet_access']['app']['source'] = source
       end
     end
   end

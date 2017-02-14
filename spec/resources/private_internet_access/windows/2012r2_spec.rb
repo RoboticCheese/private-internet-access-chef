@@ -10,7 +10,7 @@ describe 'resource_private_internet_access::windows::2012r2' do
       version: '2012R2'
     ) do |node|
       unless source.nil?
-        node.set['private_internet_access']['app']['source'] = source
+        node.normal['private_internet_access']['app']['source'] = source
       end
     end
   end

@@ -4,11 +4,12 @@
 require 'spec_helper'
 
 describe 'private-internet-access::default' do
+  let(:platform) { { platform: 'mac_os_x', version: '10.10' } }
   let(:source) { nil }
   let(:runner) do
-    ChefSpec::ServerRunner.new do |node|
+    ChefSpec::ServerRunner.new(platform) do |node|
       unless source.nil?
-        node.set['private_internet_access']['app']['source'] = source
+        node.normal['private_internet_access']['app']['source'] = source
       end
     end
   end

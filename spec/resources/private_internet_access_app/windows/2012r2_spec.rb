@@ -9,7 +9,7 @@ describe 'resource_private_internet_access_app::windows::2012r2' do
       platform: 'windows',
       version: '2012R2'
     ) do |node|
-      node.set['private_internet_access']['app']['source'] = source
+      node.normal['private_internet_access']['app']['source'] = source
     end
   end
   let(:converge) do
