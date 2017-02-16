@@ -5,9 +5,12 @@ source 'https://supermarket.chef.io'
 
 metadata
 
-cookbook 'private-internet-access_test',
-         path: 'test/fixtures/cookbooks/private-internet-access_test'
-cookbook 'private_internet_access_test',
-         path: 'spec/support/cookbooks/private_internet_access_test'
-cookbook 'private_internet_access_app_test',
-         path: 'spec/support/cookbooks/private_internet_access_app_test'
+group :unit do
+  cookbook 'resource_test',
+           path: 'spec/support/cookbooks/resource_test'
+end
+
+group :integration do
+  cookbook 'private-internet-access_test',
+           path: 'test/fixtures/cookbooks/private-internet-access_test'
+end
