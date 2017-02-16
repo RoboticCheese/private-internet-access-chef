@@ -4,6 +4,7 @@ Private Internet Access Cookbook CHANGELOG
 Unreleased
 ----------
 - Remove the windows cookbook dep and update the dmg dep
+- Update the installer script path for MacOS
 
 v1.0.0 (2015-11-28)
 -------------------

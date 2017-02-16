@@ -47,7 +47,7 @@ class Chef
         execute 'Run PIA installer' do
           command ::File.join(Chef::Config[:file_cache_path],
                               'Private\\ Internet\\ Access\\ Installer.app',
-                              'Contents/MacOS/runner')
+                              'Contents/MacOS/runner.sh')
           creates PATH
         end
       end

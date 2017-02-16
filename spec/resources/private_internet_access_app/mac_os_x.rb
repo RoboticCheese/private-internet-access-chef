@@ -29,7 +29,7 @@ shared_context 'resources::private_internet_access_app::mac_os_x' do
         it 'runs the PIA installer' do
           expect(chef_run).to run_execute('Run PIA installer').with(
             command: "#{Chef::Config[:file_cache_path]}/Private\\ Internet\\ " \
-                     'Access\\ Installer.app/Contents/MacOS/runner',
+                     'Access\\ Installer.app/Contents/MacOS/runner.sh',
             creates: '/Applications/Private Internet Access.app'
           )
         end
