@@ -76,7 +76,7 @@ shared_context 'resources::private_internet_access_app::windows' do
 
       it 'removes the PIA package' do
         p = 'Private Internet Access Support Files'
-        expect(chef_run).to remove_windows_package(p)
+        expect(chef_run).to remove_package(p)
       end
 
       it 'cleans up the left-behind PIA directory' do

@@ -20,6 +20,7 @@
 #
 
 require 'chef/resource'
+require 'chef/provider/package/windows'
 require_relative 'resource_private_internet_access_app'
 
 class Chef
@@ -56,9 +57,9 @@ class Chef
         # and let Chef handle any timeouts.
         ruby_block 'Wait for PIA installer' do
           block do
-            r = windows_package('Private Internet Access Support Files')
+            r = package('Private Internet Access Support Files')
             p = Chef::Provider::Package::Windows.new(r, run_context)
-            sleep 1 until p.current_installed_version
+            sleep 1 until p.package_provider.installed_version
           end
         end
       end
@@ -68,7 +69,7 @@ class Chef
       # behind.
       #
       action :remove do
-        windows_package 'Private Internet Access Support Files' do
+        package 'Private Internet Access Support Files' do
           action :remove
         end
         directory PATH do
