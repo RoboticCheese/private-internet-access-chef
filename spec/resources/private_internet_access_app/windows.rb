@@ -78,11 +78,6 @@ shared_context 'resources::private_internet_access_app::windows' do
         p = 'Private Internet Access Support Files'
         expect(chef_run).to remove_package(p)
       end
-
-      it 'cleans up the left-behind PIA directory' do
-        p = File.expand_path('/Program Files/pia_manager')
-        expect(chef_run).to delete_directory(p).with(recursive: true)
-      end
     end
   end
 end

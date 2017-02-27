@@ -78,10 +78,6 @@ class Chef
         package 'Private Internet Access Support Files' do
           action :remove
         end
-        directory PATH do
-          recursive true
-          action :delete
-        end
       end
 
       #
