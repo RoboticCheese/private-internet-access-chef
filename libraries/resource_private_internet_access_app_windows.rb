@@ -1,9 +1,10 @@
-# Encoding: UTF-8
+# encoding: utf-8
+# frozen_string_literal: true
 #
 # Cookbook Name:: private-internet-access
 # Library:: resource_private_internet_access_app_windows
 #
-# Copyright 2014-2015 Jonathan Hartman
+# Copyright 2014-2017, Jonathan Hartman
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,6 +20,8 @@
 #
 
 require 'chef/resource'
+require 'chef/resource/windows_package'
+require 'chef/provider/package/windows'
 require_relative 'resource_private_internet_access_app'
 
 class Chef
@@ -55,9 +58,14 @@ class Chef
         # and let Chef handle any timeouts.
         ruby_block 'Wait for PIA installer' do
           block do
-            r = windows_package('Private Internet Access Support Files')
-            p = Chef::Provider::WindowsCookbookPackage.new(r, run_context)
-            sleep 1 until p.current_installed_version
+            r = Chef::Resource::WindowsPackage.new(
+              'Private Internet Access Support Files'
+            )
+            until Chef::Provider::Package::Windows.new(r, run_context)
+                                                  .package_provider
+                                                  .installed_version
+              sleep 1
+            end
           end
         end
       end
@@ -67,12 +75,8 @@ class Chef
       # behind.
       #
       action :remove do
-        windows_package 'Private Internet Access Support Files' do
+        package 'Private Internet Access Support Files' do
           action :remove
-        end
-        directory PATH do
-          recursive true
-          action :delete
         end
       end
 
